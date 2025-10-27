@@ -1,0 +1,126 @@
+✅ groupby 활용
+
+head(n) → 그룹별 앞 n개 행
+
+nth(n) → 각 그룹의 n번째 행
+
+filter(lambda …) → 조건에 맞는 그룹만 남기기
+
+apply(lambda …) → 그룹별 함수 적용
+
+직접 정의한 함수(z-score 등)도 적용 가능
+
+
+
+✅ MultiIndex
+
+그룹화 결과는 보통 다중 인덱스 생성됨 (행/열 2단 구조)
+
+만들기:
+
+from_arrays
+
+from_product
+
+from_frame
+
+특정 레벨만 추출: get_level_values()
+
+교차 조회: xs(value, level='…')
+
+정렬: sort_index(level=…)
+
+
+
+✅ concat (데이터 이어붙이기)
+
+concat([df1,df2]) → 위/아래 붙이기 (행 기준)
+
+concat([df1,df2], axis=1) → 좌/우 붙이기 (열 기준)
+
+join='inner' → 교집합만
+
+join='outer' (기본) → 합집합
+
+Series도 붙일 수 있음 → 자동으로 DataFrame화
+
+
+
+✅ merge (SQL식 조인)
+
+how='inner' → 교집합
+
+how='outer' → 합집합
+
+how='left' / how='right' → 한쪽 기준
+
+how='cross' → 모든 조합 (카티션 곱)
+
+One-to-One, Many-to-One, Many-to-Many 다 지원
+
+
+
+✅ pivot_table
+
+index → 행 기준
+
+columns → 열 기준
+
+values → 값 채울 열
+
+aggfunc → 집계 함수(mean, sum, max 등 여러 개 가능)
+
+복수 index/columns 가능, 다중 인덱스 생성됨
+
+
+
+✅ stack & unstack
+
+stack → 열 → 행으로 내려서 긴 형식(long)
+
+unstack → 행 → 열로 올려서 넓은 형식(wide)
+
+level 지정해서 특정 레벨만 변환 가능
+
+future_stack=True → 새 동작 방식 (DataFrame 유지)
+
+
+
+✅ melt (wide → long)
+
+melt(id_vars=[…], var_name=…, value_name=…)
+
+열 이름들을 var_name 컬럼으로, 값들을 value_name 컬럼으로 변환
+
+→ 넓은 테이블을 길게 바꿈
+
+
+
+✅ wide_to_long
+
+규칙적인 열 이름(Income_2019, Expense_2019)을
+
+접두사(stubnames) + 숫자(suffix) 구조로 풀어서 long 포맷으로 변환
+
+i = 고정 식별자, j = 녹여서 새로 만들 인덱스
+
+
+
+
+🍼 아기 버전 요약
+
+groupby → 묶어서 요약, 필터, 함수 적용
+
+MultiIndex → 행/열을 계층적으로 관리
+
+concat → 데이터 붙이기 (위/아래, 좌/우)
+
+merge → SQL JOIN처럼 합치기
+
+pivot_table → 요약표(엑셀 피벗)
+
+stack/unstack → wide ↔ long 변환
+
+melt → 넓은 데이터를 길게 녹이기
+
+wide_to_long → 규칙적 열 이름 풀어서 long 변환

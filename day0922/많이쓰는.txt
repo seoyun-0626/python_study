@@ -1,0 +1,51 @@
+===============================
+사이킷런 기본 도구 정리
+===============================
+
+[1단계: 데이터 준비]
+- train_test_split (from sklearn.model_selection)
+  → 데이터셋을 훈련(train) / 테스트(test) 세트로 분리
+  → test_size=0.2 → 20%를 테스트셋으로
+  → random_state=42 → 무작위 분할 고정 (재현성)
+
+[2단계: 데이터 전처리]
+- StandardScaler (from sklearn.preprocessing)
+  → 데이터 스케일 조정 (평균=0, 표준편차=1로 변환)
+  → .fit(train) → 훈련 데이터 기준 평균/표준편차 계산
+  → .transform(train/test) → 변환 적용
+
+[3단계: 모델 학습/평가]
+
+(1) 선형 계열
+- LogisticRegression (from sklearn.linear_model)
+  → 분류 모델 (클래스 예측)
+  → predict_proba() → 클래스 확률 출력
+  → decision_function() → 소프트맥스 전 단계 점수(logit)
+  → 규제: C (작을수록 규제 ↑)
+
+- SGDClassifier (from sklearn.linear_model)
+  → 확률적 경사하강법(SGD) 기반 분류
+  → 다양한 손실 함수 지원
+     · loss="log_loss" → 로지스틱 회귀
+     · loss="hinge" → SVM 스타일
+  → partial_fit() 지원 → 점진적 학습 가능 (온라인 학습)
+
+(2) 결정 트리 계열
+- DecisionTreeClassifier
+  → 데이터를 조건 분기(나무 구조)로 분류
+
+[자주 쓰는 메서드]
+- .fit(X_train, y_train) → 모델 학습
+- .score(X, y) → 정확도 평가
+- .predict(X) → 예측 결과 (클래스)
+- .predict_proba(X) → 예측 결과 (확률)
+- .decision_function(X) → 소프트맥스 전 단계 점수
+- .partial_fit(X, y) → 점진적 학습 (SGD 전용)
+
+===============================
+비유 정리
+- train_test_split → 문제집 나누기 (공부용 vs 시험용)
+- StandardScaler → 단위 맞추기 (cm, kg 등 범위 차이 줄임)
+- LogisticRegression → "확률적으로 이 클래스일 것 같다"
+- SGDClassifier → "빠르게 조금씩 배우는 버전" (온라인 학습 가능)
+===============================

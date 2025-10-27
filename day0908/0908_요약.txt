@@ -1,0 +1,109 @@
+✅ 시리즈에 apply & map
+
+
+apply() = 시리즈 원소 하나씩 꺼내서 함수에 넣고 결과 반환
+
+인자 추가도 가능 (apply(func, b=10))
+
+map() = 원소 단위 적용 (apply랑 비슷)
+
+함수, lambda, 딕셔너리 매핑 다 가능
+
+성별 → 숫자 변환: map({'male':0, 'female':1})
+
+
+
+✅ 데이터프레임에 map
+
+
+map() → DataFrame 전체 원소에 함수 적용 (원소 단위)
+
+apply(axis=0) → 열 단위 연산
+
+apply(axis=1) → 행 단위 연산
+
+조건 넣으면 열/행 필터링도 가능
+
+새 컬럼 만들기도 가능 (df['High'] = ...)
+
+
+
+✅ pipe
+
+
+.pipe() = DataFrame을 함수에 흘려보내는 문법
+
+df.pipe(f) = f(df)랑 같음
+
+여러 함수 연결 가능 → df.pipe(f1).pipe(f2)
+
+NaN 처리: isnull() → True/False → .sum()으로 개수 세기
+
+문자열 첫 글자 뽑기: .str[0]
+
+항구 코드 맞는지 검증: == 비교해서 Boolean 열 생성
+
+
+
+✅ 열 순서 바꾸기
+
+
+sorted(columns) → 알파벳 순서
+
+sorted(columns, reverse=True) → 알파벳 역순
+
+df[['원하는','순서']] → 직접 원하는 순서 지정 (필요 없는 열은 빠짐)
+
+
+
+✅ 날짜 분리 (엑셀 → 연/월/일/요일)
+
+
+방법① 문자열 split → “문자 자르듯이 연,월,일 따오기”
+
+방법② to_datetime() → 날짜 전용 속성으로 연,월,일,요일 뽑기
+👉 두 번째 방법이 훨씬 깔끔하고 강력함
+
+
+
+✅ groupby + 다양한 집계 (std, mean, agg)
+
+
+groupby = 데이터를 그룹별로 묶기
+
+mean, std → 그룹별 통계
+
+as_index=False → 그룹 이름을 인덱스가 아니라 열로 유지
+
+describe() → 그룹별 기본 통계 한꺼번에
+
+value_counts() → 그룹별 빈도 세기
+
+agg() → 여러 집계 함수 한 번에 적용 가능
+
+모든 열에 여러 함수
+
+열마다 다른 함수
+
+직접 만든 함수도 가능
+
+
+
+✅ groupby + cumsum, transform, z-score
+
+
+cumsum: 그룹 안에서 차례대로 누적합
+
+sum: 그룹 합계만
+
+transform('함수'): 그룹 결과를 원본 df 크기로 되돌려줌 (새 열 붙이기 좋음)
+
+z-score: (값 - 평균)/표준편차 → 값이 그룹 평균에서 얼마나 떨어져 있는지
+
+z-score 계산:
+
+사용자 함수 def z_score()
+
+lambda
+
+transform('mean'), transform('std') 조합

@@ -1,0 +1,160 @@
+❤ KNN (K-Nearest Neighbors)
+- 분류: 가까운 K개 이웃 다수결로 클래스 결정
+- 회귀: 가까운 K개 이웃 타깃 평균 예측
+
+❤ 선형 회귀 (Linear Regression)
+- 입력 특성들의 선형 조합으로 예측
+- 손실 함수: MSE (평균제곱오차)
+
+❤ 릿지 회귀 (Ridge Regression)
+- 선형 회귀 + L2 규제
+- 손실 함수: MSE + λ Σ w²
+- 과적합 방지 (모든 계수를 조금씩 줄임)
+
+❤ 라쏘 회귀 (Lasso Regression)
+- 선형 회귀 + L1 규제
+- 손실 함수: MSE + λ Σ |w|
+- 일부 계수 = 0 → 변수 선택 효과
+
+❤ 로지스틱 회귀 (Logistic Regression)
+- 분류용 모델 (0/1, 다중 클래스)
+- z = w·x + b → sigmoid(z)
+- 손실 함수: Log Loss (교차 엔트로피 손실)
+- 다중 클래스: 소프트맥스 회귀
+
+❤ SGD (Stochastic Gradient Descent)
+- 확률적 경사 하강법
+- 대용량 데이터 학습에 적합
+- 분류/회귀 모두 가능 (loss 옵션에 따라)
+
+❤ 결정 트리 (Decision Tree)
+- if-else 구조로 분류/회귀
+- 직관적, 해석 쉬움
+- 과적합 쉬움 → max_depth, min_samples_split 제한 필요
+
+❤ 랜덤 포레스트 (Random Forest)
+- 여러 결정트리를 앙상블
+- 무작위 샘플 + 무작위 특성
+- 과적합 완화, 일반적으로 성능 ↑
+
+❤ 그레이디언트 부스팅 (Gradient Boosting)
+- 이전 트리의 오차를 보완하며 순차 학습
+- XGBoost, LightGBM, CatBoost 등
+- 적은 데이터에서도 강력
+
+---------------------------------------
+❤ 손실 함수 (Loss Function)
+- 모델의 예측이 얼마나 틀렸는지 수치화
+- 회귀: MSE, MAE
+- 분류: Log Loss (교차 엔트로피)
+
+❤ SSE & MSE
+- SSE: 오차 제곱의 총합
+- MSE: SSE / N → 평균 제곱 오차
+
+❤ 경사 하강법 (Gradient Descent)
+- 손실 함수 최소화 알고리즘
+- 기울기(미분) 방향 반대로 조금씩 이동
+- 종류: 배치 GD, 확률적 GD, 미니배치 GD
+
+❤ 규제 (Regularization)
+- 과적합 방지용 패널티
+- L1 (라쏘): Σ |w| → 변수 선택 효과
+- L2 (릿지): Σ w² → 안정적, 계수 축소
+
+❤ 시그모이드 (Sigmoid)
+- 확률 출력 (0~1)
+- σ(x) = 1 / (1 + e^-x)
+
+❤ 소프트맥스 (Softmax)
+- 다중 클래스 확률 분포 출력
+- 각 클래스 확률의 합 = 1
+
+❤ 특성 공학 (Feature Engineering)
+- 데이터를 모델이 학습하기 좋게 가공
+- 특성 선택, 변환(로그, 표준화), 생성(다항 특성), 인코딩 등
+
+❤ 교차 검증 (Cross Validation, CV)
+- 데이터를 여러 폴드로 나눠 번갈아 검증
+- 데이터 분할에 따른 성능 변동 ↓
+
+❤ 그리드 서치 (Grid Search)
+- 모든 하이퍼파라미터 조합 탐색
+- GridSearchCV = 교차 검증 포함
+
+❤ 랜덤 서치 (Random Search)
+- 일부 조합만 랜덤으로 탐색
+- RandomizedSearchCV = 교차 검증 포함
+
+
+
+
+👉 쉽게 말하면:
+첫 번째 트리가 틀린 부분을 두 번째가 고쳐주고,
+세 번째가 또 부족한 부분을 메꿔주는 릴레이 학습.
+
+
+
+# =============================
+# 기본 라이브러리
+# =============================
+import numpy as np              # 수치 계산 (배열, 수학 함수)
+import pandas as pd             # 데이터 프레임 (CSV, Excel 읽기/쓰기)
+
+# =============================
+# 데이터 분할 / 교차 검증
+# =============================
+from sklearn.model_selection import train_test_split    # 훈련/테스트 세트 분할
+from sklearn.model_selection import cross_val_score     # 교차 검증 점수 계산
+from sklearn.model_selection import GridSearchCV        # 하이퍼파라미터 탐색 (완전탐색)
+from sklearn.model_selection import RandomizedSearchCV  # 하이퍼파라미터 탐색 (랜덤탐색)
+
+# =============================
+# 최근접 이웃 (KNN)
+# =============================
+from sklearn.neighbors import KNeighborsClassifier      # KNN 분류
+from sklearn.neighbors import KNeighborsRegressor       # KNN 회귀
+
+# =============================
+# 선형 모델 계열
+# =============================
+from sklearn.linear_model import LinearRegression       # 선형 회귀 (기본 회귀)
+from sklearn.linear_model import Ridge                  # 릿지 회귀 (L2 규제)
+from sklearn.linear_model import Lasso                  # 라쏘 회귀 (L1 규제)
+from sklearn.linear_model import LogisticRegression     # 로지스틱 회귀 (분류, 시그모이드/소프트맥스)
+from sklearn.linear_model import SGDClassifier          # SGD (분류)
+from sklearn.linear_model import SGDRegressor           # SGD (회귀)
+
+# =============================
+# 결정 트리 계열
+# =============================
+from sklearn.tree import DecisionTreeClassifier         # 결정트리 분류
+from sklearn.tree import DecisionTreeRegressor          # 결정트리 회귀
+
+# =============================
+# 앙상블 (여러 트리 조합)
+# =============================
+from sklearn.ensemble import RandomForestClassifier     # 랜덤포레스트 분류
+from sklearn.ensemble import RandomForestRegressor      # 랜덤포레스트 회귀
+from sklearn.ensemble import GradientBoostingClassifier # 그래디언트 부스팅 분류
+from sklearn.ensemble import GradientBoostingRegressor  # 그래디언트 부스팅 회귀
+
+# =============================
+# 전처리 / 특성 공학
+# =============================
+from sklearn.preprocessing import StandardScaler        # 데이터 표준화 (평균=0, 분산=1)
+from sklearn.preprocessing import PolynomialFeatures    # 다항식 특성 생성 (x, x², x³...)
+from sklearn.preprocessing import OneHotEncoder         # 범주형 변수 원-핫 인코딩
+
+
+
+*****요약*********************************
+
+KNN → neighbors
+선형/릿지/라쏘/로지스틱/SGD → linear_model
+결정트리 → tree
+랜덤포레스트/부스팅 → ensemble
+데이터 분할·탐색 → model_selection
+전처리·특성공학 → preprocessing
+
+

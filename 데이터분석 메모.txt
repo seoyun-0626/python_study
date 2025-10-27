@@ -1,0 +1,494 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+
+###################################################
+### DataFrame 생성
+df2 = pd.DataFrame([[15, '남', '덕영중'], [17, '여', '수리중']],
+                   index=['준서', '예은'],
+                   columns=['나이', '성별', '학교'])
+
+dict_data = {'c0':[1,2,3], 'c1':[4,5,6], 'c2':[7,8,9]}
+df = pd.DataFrame(dict_data)
+
+###################################################
+### <인덱스, 컬럼이름 설정>
+df2.index = ['학생1','학생2']                     # 인덱스 전체 변경
+df2.columns = ['연령','남녀','소속']              # 컬럼 전체 변경
+
+### <rename>
+df2.rename(index={'학생1':'김학생'}, inplace=True)         # 인덱스 일부 변경
+df2 = df2.rename(columns={'연령':'age','남녀':'gender'})   # 컬럼 일부 변경
+
+### <set_index>
+ndf = df.set_index('c0')    # 특정 컬럼을 인덱스로 설정 (기존 인덱스 사라짐)
+
+### <reindex>
+new_index = [0,1,2,3,4]
+ndf = df.reindex(columns=['c1','c2','c0'])     # 컬럼 순서 바꾸기
+ndf = df.reindex(index=new_index)              # 새로운 인덱스로 재생성
+# 없는 값은 NaN, fill_value=80 옵션 → 없는 값 80으로 채움
+
+### <reset_index>
+ndf = df.reset_index()               # 인덱스를 컬럼으로 올림, 새 숫자 인덱스 생성
+ndf = df.reset_index(drop=True)      # 기존 인덱스 버리고 숫자 인덱스만
+
+### <sort_index, sort_values>
+ndf = df.sort_index(ascending=True)  # 인덱스 기준 오름차순 정렬
+ndf = df.sort_index(ascending=False) # 인덱스 기준 내림차순 정렬
+ndf = df.sort_values(by='c1')        # 특정 컬럼 기준 정렬
+
+###################################################
+### <drop>
+df3 = df.drop(0, axis=0)                    # 행 삭제 (인덱스 0 제거)
+df2 = df.drop('c1', axis=1)                 # 열 삭제
+df3 = df.drop(['c1','c2'], axis=1)          # 여러 열 삭제
+
+###################################################
+### <행선택>
+df.loc[0]                   # 인덱스명으로 선택
+df.loc[[0,1]]               # 여러 행 선택
+df.loc[0:1]                 # 구간 선택
+df.iloc[0]                  # 0번째 행
+df.iloc[[0,1]]              # 0,1번째 행
+df.iloc[0:1]                # 슬라이싱
+
+### <열선택>
+df['c1']                    # 단일 열
+df[['c1','c2']]             # 여러 열
+
+### <행+열 선택>
+df.iloc[0:5]                # 0~4행
+df.iloc[0:10:2]             # 0~9행 중 2칸 간격
+df.iloc[0:5, 1:3]           # 0~4행, 1~2열
+df.iloc[:, 0:2]             # 전체 행, 0~1열
+
+### <다양한 선택>
+df.loc[0,'c1']                        # 특정 원소 반환 (스칼라)
+df.iloc[0,0]                          # 원소 반환
+df.loc[0,['c1','c2']]                 # 시리즈 반환
+df.iloc[0,[1,2]]                      # 시리즈 반환
+df.loc[[0,1],[ 'c1','c2']]            # 데이터프레임 반환
+df.iloc[0:2,0:2]                      # 데이터프레임 반환
+
+###################################################
+### <열 추가>
+df['국어'] = 80                       # 모든 행 80
+df['미술'] = [80,90,70]               # 개수 맞춰서 추가
+
+### <행 추가>
+df.loc['동수'] = 0                    # 모든 값 0
+df.loc['말숙'] = [34,54,77,90]        # 열 개수 맞게 데이터 추가
+
+###################################################
+### <원소 값 변경>
+df.loc['동수','국어'] = 65
+df.iloc[3,1] = 70
+df.loc['동수','미술':'국어'] = [90,98,100]   # 범위 선택 후 변경
+
+###################################################
+### <전치>
+df = df.transpose()    # 행 ↔ 열 바꾸기
+
+###################################################
+### <기본 메서드>
+titanic = sns.load_dataset('titanic')
+print(titanic.head())              # 상위 5개
+print(titanic.tail())              # 하위 5개
+titanic.info()                     # 데이터 요약
+titanic.shape                      # (행, 열)
+titanic.dtypes                     # 자료형
+titanic.describe()                 # 숫자형 요약
+titanic.describe(include=object)   # 문자형 요약
+titanic['sex'].value_counts()      # 고유값 개수
+
+###################################################
+### <조건 필터링>
+print(titanic[titanic['age'] < 20])      # 조건 필터링
+mask1 = (titanic['age'] >= 10) & (titanic['age'] < 20)
+df_teenage = titanic[mask1]              # 10대만
+mask2 = (titanic['sex']=='female') & (titanic['age'] < 10)
+df_female_under10 = titanic.loc[mask2,['age','sex']]   # 여자 10세 미만
+mask3 = (titanic['age'] >= 60)
+titanic['df_y_o'] = mask3                # 60세 이상 여부 컬럼 추가
+
+###################################################
+### <파일 입출력>
+df1 = pd.read_csv('data/auto-mpg.csv') 
+df2 = pd.read_excel('data/남북한발전전력량.xlsx') 
+df3 = pd.read_json('data/read_json_sample.json')
+
+df.to_csv("data/df_sample.csv") 
+df.to_json("data/df_sample.json")
+df.to_excel("data/df_sample.xlsx")
+
+###################################################
+### <결측치 처리>
+df['deck'].value_counts(dropna=False)   # NaN 포함 세기
+df.isnull()                             # NaN이면 True
+df.isnull().sum(axis=0)                 # 각 컬럼 NaN 개수
+df.dropna()                             # NaN 있는 행 삭제
+df.dropna(axis=1)                       # NaN 있는 열 삭제
+df.dropna(subset=['age'],axis=0)        # age NaN이면 행 삭제
+df.dropna(subset=['age','deck'],axis=0) # age, deck 중 하나라도 NaN이면 삭제
+df['embark_town'].mode()                # 최빈값
+df['age'].fillna(df['age'].mean())      # 평균으로 채움
+df['embark_town'].ffill()               # 이전 행 값으로 채움
+df['embark_town'].bfill()               # 이후 행 값으로 채움
+
+###################################################
+### <중복 처리>
+df.duplicated()                         # 전체 중복 여부
+df['c2'].duplicated()                   # 특정 컬럼만 중복
+df.duplicated(subset=['c2'])            # 특정 컬럼 기준 중복
+df.drop_duplicates()                    # 중복 행 제거
+df.drop_duplicates(subset=['c2','c3'])  # 특정 컬럼 기준 중복 제거
+
+###################################################
+### <데이터 변환>
+df['horsepower'].unique()                                # 고유값 확인
+df['horsepower'] = df['horsepower'].replace('?', np.nan) # '?' → NaN으로 변환
+df['horsepower'] = df['horsepower'].astype('float')      # 자료형 float으로 변환
+df['origin'] = df['origin'].replace({1:'USA',2:'EU',3:'JPN'}) # 값 치환 (숫자→문자)
+
+###################################################
+
+df['origin'] = df['origin'].astype('category')           # 범주형(category)으로 변환
+
+###################################################
+
+label_encoder.fit_transform(data1)                       # 레이블 인코딩 (문자 → 정수)
+onehot_encoder.fit_transform(data2)                      # 원핫 인코딩 (정수 → 0/1 벡터)
+
+scaler = MinMaxScaler()
+scaler.fit_transform(df[['horsepower']])                 # 스케일링 (정규화/표준화)
+
+scaler = StandardScaler()
+scaler.fit_transform(df[['horsepower']]) 
+
+###################################################
+
+df['new_Date'] = pd.to_datetime(df['Date'])              # 문자열 Date → Timestamp 변환
+
+==============================================
+
+✅⭐⭐⭐⭐전처리   ⭐⭐⭐⭐✅
+✅⭐⭐⭐⭐누락 데이터 확인하기 ⭐⭐⭐⭐ day0904 isnull
+df.isnull().sum()   # NaN 개수 확인
+df.info()           # 데이터 타입, 결측치 개요
+
+✅⭐⭐⭐⭐단위변환 
+
+df['height_m'] = df['height_cm'] / 100
+df['price_usd'] = df['price_krw'] / 1300
+df['time_sec'] = df['time_min'] * 60
+
+import numpy as np
+df['sales_log'] = np.log1p(df['sales'])
+
+
+✅⭐⭐⭐⭐누락 데이터 처리하기(행을 지우거나, 채워 넣거나) 0904 dropna--- fillna()
+df = df.dropna(axis=0) ---nan포함된 행 전체삭제
+df = df.dropna(axis=1) ---nan포함된 열 전체 삭제
+df = df.dropna(subset=['age'], axis=0) --- age컬럼이 난인 행만 삭제 
+
+✅⭐⭐⭐⭐필요없는 컬럼 삭제하기⭐⭐⭐⭐
+df.drop('컬럼명', axis=1)
+df.drop(columns=['컬럼명1','컬럼명2'])
+
+✅⭐⭐⭐⭐범주 나눠보기 => 범주별로 인코딩하기 ⭐⭐⭐⭐ 0904 df_nomal,,,df_bins
+..범주 확인
+print(df['gender'].unique())
+
+..범주형으로 변환
+df['gender'] = df['gender'].astype('category')
+
+1. Label Encoding (문자 → 정수)
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+df['gender_le'] = le.fit_transform(df['gender'])
+
+2. One-Hot Encoding (범주별 0/1)
+df = pd.get_dummies(df, columns=['gender'])
+
+✅⭐⭐⭐⭐중복행 확인 (및 제거)  ⭐⭐⭐⭐ 0904 df_duplicated
+df4 = df.drop_duplicates(keep=False) # 중복값 다 제거
+df.duplicated().sum()         ---중복 행 개수 확인
+df = df.drop_duplicates()     ---- 중복 행 삭제
+
+
+✅⭐⭐⭐⭐데이터 스케일링(minmax,standard)⭐⭐⭐⭐ 0904_07_scaling.py
+
+from sklearn.preprocessing import MinMaxScaler
+
+scaler = MinMaxScaler()
+df['horsepower_minmax'] = scaler.fit_transform(df[['horsepower']])
+X' = (X - X_min) / (X_max - X_min)
+
+
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+df['horsepower_standard'] = scaler.fit_transform(df[['horsepower']])
+X' = (X - μ) / σ
+
+==============================================
+
+✅ ⭐⭐⭐⭐ 시계열 데이터 ⭐⭐⭐⭐ ✅
+
+⏰ 1. 날짜/시간 변환
+
+df['new_Date'] = pd.to_datetime(df['Date'])  # 문자열 → Timestamp 변환
+
+ㄴpd.to_datetime() : 문자열 날짜를 시계열 타입으로 바꿈
+ㄴ .dt.year / .dt.month / .dt.day / .dt.day_name() : 연/월/일/요일 추출
+
+⏰ 2. 인덱스 활용
+
+df = df.set_index('new_Date')   # 시계열 인덱스로 지정 
+
+ㄴ DatetimeIndex : 시계열 데이터에 특화된 인덱스
+
+
+⏰ 3. Timestamp & Period
+
+ts = pd.Timestamp("2024-01-01")
+pr = ts.to_period('M')   # 월 단위 Period로 변환
+
+ㄴTimestamp : 특정 시점 (2018-06-27 10:30:00)
+ㄴPeriod : 기간 단위 (2018-06 = 2018년 6월)
+
+⏰ 5. Timedelta (시간 간격)
+
+pd.Timedelta('1 days')
+a = pd.Timestamp('2018-07-03') - pd.Timestamp('2018-07-01') # 2일 차이
+
+ㄴ날짜/시간의 차이, 더하기/빼기 가능
+
+⏰ 6. Shift & Frequency
+
+df.shift(1)                # 데이터 한 칸씩 밀기
+df.shift(3, freq='D')      # 날짜 기준으로 3일 이동
+df.asfreq('5D')            # 5일 간격으로 재구성
+
+⏰ 7. Resample (리샘플링)
+
+df.resample('M').mean()    # 월별 평균
+df.resample('3B').sum()    # 3영업일 단위 합계
+
+ㄴ시계열을 원하는 단위로 묶어 집계
+
+⏰ 8. Rolling (이동 윈도우)
+
+df.rolling(window=3).mean()    # 3일 이동평균
+df.rolling('7D').sum()         # 7일치 합계
+
+***** 요약 *****
+
+날짜 변환 : to_datetime → .dt.year 같은 속성으로 연/월/일 뽑기
+
+인덱스 : 날짜를 인덱스로 쓰면 df.loc['2018-06'] 이런 게 가능
+
+Timestamp vs Period : 시점 vs 기간
+
+date_range / period_range : 날짜 쭉 만들어줌
+
+Timedelta : 날짜 사이 간격 (더하기/빼기)
+
+shift : 데이터/날짜 밀기
+
+resample : 월별/주별 등으로 묶어서 합계·평균
+
+rolling : 이동평균 (최근 3일, 최근 7일 합계 등)
+
+# =====================================================================
+# ✅ 1. apply & map (Series, DataFrame 함수 적용)
+# =====================================================================
+titanic = sns.load_dataset('titanic')
+df = titanic[['age','fare']]
+
+# apply: 시리즈 원소마다 함수 적용
+print(df['age'].apply(lambda x: x+10).head())
+
+# map: 원소 단위 적용 (apply와 비슷)
+print(df['age'].map(lambda x: x+10).head())
+
+# 딕셔너리 매핑
+gender_dict = {'male':0, 'female':1}
+titanic['gender'] = titanic['sex'].map(gender_dict)
+print(titanic[['sex','gender']].head())
+
+
+# =====================================================================
+# ✅ 2. pipe (데이터프레임을 함수에 흘려보내기)
+# =====================================================================
+df2 = titanic[['embark_town','embarked']]
+
+def extract_initial(df):
+    df['town_initial'] = df['embark_town'].str[0]
+    return df
+
+def verify_initial(df):
+    df['verified'] = df['embarked'] == df['town_initial']
+    return df
+
+print(df2.pipe(extract_initial).pipe(verify_initial))
+
+
+# =====================================================================
+# ✅ 3. column_sort (열 순서 바꾸기)
+# =====================================================================
+df3 = titanic.loc[:, 'survived':'age']
+cols_sorted = sorted(df3.columns)
+print(df3[cols_sorted].head())
+
+
+# =====================================================================
+# ✅ 4. column_split (날짜 분리)
+# =====================================================================
+df4 = pd.read_csv('./data/stock-data.csv')
+df4['new_Date'] = pd.to_datetime(df4['Date'])
+df4['Year'] = df4['new_Date'].dt.year
+df4['Month'] = df4['new_Date'].dt.month
+df4['Day'] = df4['new_Date'].dt.day
+print(df4.head())
+
+
+# =====================================================================
+# ✅ 5. groupby
+# =====================================================================
+df = titanic[['age','sex','class','fare','survived']]
+grouped = df.groupby('class', observed=True)
+
+# 그룹별 평균
+print(grouped.mean(numeric_only=True))
+
+
+# =====================================================================
+# ✅ 6. groupby + agg (여러 집계)
+# =====================================================================
+agg_all = grouped.agg(['min','max'])
+print(agg_all)
+
+agg_sep = grouped.agg({'fare':['min','max'], 'age':'mean'})
+print(agg_sep)
+
+
+# =====================================================================
+# ✅ 7. groupby + transform
+# =====================================================================
+# transform은 원본 크기 유지
+df['age_mean'] = grouped['age'].transform('mean')
+print(df[['class','age','age_mean']].head())
+
+# z-score
+df['age_z'] = grouped['age'].transform(lambda x: (x-x.mean())/x.std())
+print(df[['class','age','age_z']].head())
+
+
+# =====================================================================
+# ✅ 8. groupby + filter
+# =====================================================================
+# 평균 나이 < 30인 그룹만
+filtered = grouped.filter(lambda x: x['age'].mean()<30)
+print(filtered.head())
+
+
+# =====================================================================
+# ✅ 9. groupby + apply
+# =====================================================================
+agg_grouped = grouped[['age','survived']].apply(lambda x: x.describe())
+print(agg_grouped)
+
+
+# =====================================================================
+# ✅ 10. multi_index (다중 인덱스)
+# =====================================================================
+grouped2 = df.groupby(['class','sex'], observed=True)
+gdf = grouped2.agg(['mean','std'], numeric_only=True)
+print(gdf)
+
+# 특정 값 접근
+print(gdf.loc[('First','female'),('age','mean')])
+
+# cross-section
+print(gdf.xs('male', level='sex'))
+
+
+# =====================================================================
+# ✅ 11. concat (데이터프레임/시리즈 합치기)
+# =====================================================================
+df1 = pd.DataFrame({'a':['a0','a1'],'b':['b0','b1']})
+df2 = pd.DataFrame({'a':['a2','a3'],'b':['b2','b3']})
+
+print(pd.concat([df1,df2]))          # 세로
+print(pd.concat([df1,df2], axis=1)) # 가로
+
+
+# =====================================================================
+# ✅ 12. merge (조인)
+# =====================================================================
+price = pd.DataFrame({'id':[1,2,3],'price':[100,200,300]})
+value = pd.DataFrame({'id':[2,3,4],'value':[1000,2000,3000]})
+
+print(pd.merge(price,value,how='inner',on='id')) # 교집합
+print(pd.merge(price,value,how='outer',on='id')) # 합집합
+print(pd.merge(price,value,how='left',on='id'))  # 왼쪽 기준
+print(pd.merge(price,value,how='cross'))         # 교차
+
+
+# =====================================================================
+# ✅ 13. pivot_table (피벗)
+# =====================================================================
+pdf = pd.pivot_table(df,
+                     index='class',
+                     columns='sex',
+                     values='age',
+                     aggfunc='mean',
+                     observed=True)
+print(pdf)
+
+
+# =====================================================================
+# ✅ 14. stack / unstack (재배열)
+# =====================================================================
+df_pivot = pd.pivot_table(df,
+                          index=['class','survived'],
+                          columns='sex',
+                          values='age',
+                          aggfunc='mean',
+                          observed=True)
+
+print(df_pivot.stack())   # 열 → 행
+print(df_pivot.unstack()) # 행 → 열
+
+
+# =====================================================================
+# ✅ 15. melt / wide_to_long (긴형식 변환)
+# =====================================================================
+df3 = pd.DataFrame({
+    "Name":["John","Mary"],
+    "Age":[28,32],
+    "Salary":[50000,60000]
+})
+
+print(df3.melt(id_vars=["Name"], var_name="Attr", value_name="Value"))
+
+df_wide = pd.DataFrame({
+    "Company":["Google","Yahoo"],
+    "Income_2019":[100,50],
+    "Income_2020":[120,55],
+    "Expense_2019":[50,30],
+    "Expense_2020":[60,35]
+})
+
+df_long = pd.wide_to_long(df_wide,
+                          stubnames=['Income','Expense'],
+                          i='Company',
+                          j='Year',
+                          sep='_',
+                          suffix='\d+')
+print(df_long)
+
+
+
